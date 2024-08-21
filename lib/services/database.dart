@@ -1,5 +1,5 @@
 import 'package:pennywise/models/expense.dart';
-import 'package:pennywise/pages/income.dart';
+import 'package:pennywise/models/income.dart';
 
 class Database {
   //income

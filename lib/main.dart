@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pennywise/firebase_options.dart';
 import 'package:pennywise/router/router.dart';
+import 'package:pennywise/theme/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,10 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: theme,
       routerConfig: router,
     );
   }

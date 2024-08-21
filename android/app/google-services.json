@@ -12,7 +12,20 @@
           "package_name": "com.penny.wise"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "774157095097-jd21hmq2gv3sa776h04vvqa87gpbnobk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.penny.wise",
+            "certificate_hash": "f4ed99894daa7032e56b3065e36d637c7be92f7b"
+          }
+        },
+        {
+          "client_id": "774157095097-s1bqu8qqmohdmfgoq3homvbi7gcrue7e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBKbIdB5CNGENskM_jD7igdvp6xjIHB1-s"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "774157095097-s1bqu8qqmohdmfgoq3homvbi7gcrue7e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

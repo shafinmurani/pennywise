@@ -1,6 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/widgets.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class Auth {
@@ -21,6 +20,15 @@ class Auth {
 
       // Once signed in, return the UserCredential
       await FirebaseAuth.instance.signInWithCredential(credential);
+      newUser(
+        FirebaseAuth.instance.currentUser?.uid,
+        {
+          "name": FirebaseAuth.instance.currentUser?.displayName,
+          "email": FirebaseAuth.instance.currentUser?.email,
+          "income": [],
+          "expenses": [],
+        },
+      );
       return "Welcome, ${FirebaseAuth.instance.currentUser?.displayName}";
     } on FirebaseAuthException catch (e) {
       return "Please try again, ${e.message}";
@@ -29,5 +37,15 @@ class Auth {
 
   logout() async {
     await FirebaseAuth.instance.signOut();
+  }
+
+  newUser(String? id, Map<String, dynamic> data) async {
+    final collection =
+        await FirebaseFirestore.instance.collection("users").get();
+    if (collection.docs.map((doc) => doc.id).contains(id)) {
+      return 0;
+    } else {
+      FirebaseFirestore.instance.collection("/user").doc(id).set(data);
+    }
   }
 }

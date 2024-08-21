@@ -20,7 +20,6 @@ class _AuthManagerState extends State<AuthManager> {
           // user logged in
           if (snapshot.hasData) {
             return const Home();
-
             // user is NOT logged in
           } else {
             return const Login();

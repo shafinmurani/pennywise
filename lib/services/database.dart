@@ -21,7 +21,33 @@ class Database {
     return incomeArray;
   }
 
-  addIncome(IncomeModel income, String? uid) {}
+  Future<List<String>> getSources(String? uid) async {
+    List<String> sourceArray = [];
+    await FirebaseFirestore.instance.collection("/user").doc(uid).get().then(
+      (val) {
+        for (var element in val['sources']) {
+          sourceArray.add(element);
+        }
+      },
+    );
+    return sourceArray;
+  }
+
+  void addSources(String? uid, String source, dynamic callback) async {
+    var collection = FirebaseFirestore.instance.collection('/user');
+    await collection.doc(uid).update({
+      "sources": FieldValue.arrayUnion([source])
+    });
+    callback();
+  }
+
+  addIncome(IncomeModel income, String? uid) async {
+    var collection = FirebaseFirestore.instance.collection('/user');
+    await collection.doc(uid).update({
+      "income": FieldValue.arrayUnion([income.toJson()])
+    });
+  }
+
   deleteIncome(IncomeModel income, String? uid) {}
 
   //expenses

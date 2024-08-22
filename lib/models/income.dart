@@ -1,7 +1,7 @@
-class IncomeModel{
+class IncomeModel {
   final double amount;
   final String source;
-  final String id;
+  final int id;
 
   IncomeModel({required this.amount, required this.source, required this.id});
 

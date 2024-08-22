@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pennywise/models/income.dart';
 import 'package:pennywise/services/database.dart';
 
@@ -29,16 +31,19 @@ class _IncomeState extends State<Income> {
 
   @override
   Widget build(BuildContext context) {
+    if (mounted) {
+      setState(() {});
+    }
     return RefreshIndicator(
       onRefresh: () async {
         setState(() {
-          incomeArray = [];
           isLoading = true;
+          incomeArray = [];
         });
-        await Future.delayed(const Duration(seconds: 1));
         await Database()
             .getIncome(FirebaseAuth.instance.currentUser?.uid)
-            .then((res) {
+            .then((res) async {
+          await Future.delayed(const Duration(seconds: 1));
           setState(() {
             incomeArray = res;
             isLoading = false;
@@ -47,7 +52,7 @@ class _IncomeState extends State<Income> {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
           title: Text(
             "Income",
             style: GoogleFonts.robotoMono(
@@ -57,12 +62,18 @@ class _IncomeState extends State<Income> {
           ),
         ),
         body: isLoading
-            ? const Center(
-                child: CupertinoActivityIndicator(
-                  radius: 14,
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Lottie.asset("assets/loading.json", height: 120),
+                    const Gap(10),
+                    const Text("Loading..."),
+                  ],
                 ),
               )
             : incomeArray.isEmpty
+                //TODO : Fix auto array clear bug, can't refresh
                 ? const Center(child: Text("No data available."))
                 : ListView.builder(
                     itemCount: incomeArray.length,

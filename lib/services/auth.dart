@@ -21,14 +21,14 @@ class Auth {
       // Once signed in, return the UserCredential
       await FirebaseAuth.instance.signInWithCredential(credential);
       newUser(
-        FirebaseAuth.instance.currentUser?.uid,
-        {
+        id: FirebaseAuth.instance.currentUser?.uid,
+        data: {
           "name": FirebaseAuth.instance.currentUser?.displayName,
           "email": FirebaseAuth.instance.currentUser?.email,
           "income": [],
           "expenses": [],
           "sources": [],
-          "topics":[],
+          "topics": [],
         },
       );
       return "Welcome, ${FirebaseAuth.instance.currentUser?.displayName}";
@@ -41,13 +41,15 @@ class Auth {
     await FirebaseAuth.instance.signOut();
   }
 
-  newUser(String? id, Map<String, dynamic> data) async {
-    final collection =
-        await FirebaseFirestore.instance.collection("users").get();
-    if (collection.docs.map((doc) => doc.id).contains(id)) {
+  newUser({String? id, required Map<String, dynamic> data}) async {
+    final snapShot =
+        await FirebaseFirestore.instance.collection('/user').doc(id).get();
+
+    if (snapShot.exists) {
       return 0;
     } else {
       FirebaseFirestore.instance.collection("/user").doc(id).set(data);
+      return;
     }
   }
 }

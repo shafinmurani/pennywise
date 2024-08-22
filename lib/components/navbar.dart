@@ -16,6 +16,7 @@ class _NavbarState extends State<Navbar> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       tabBar: CupertinoTabBar(
         backgroundColor: Colors.grey.shade100,
+        height: 55,
         border: const Border(),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

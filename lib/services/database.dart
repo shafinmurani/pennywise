@@ -4,12 +4,12 @@ import 'package:pennywise/models/income.dart';
 
 class Database {
   //income
-  Future<List<Income>> getIncome(String? uid) async {
-    List<Income> incomeArray = [];
+  Future<List<IncomeModel>> getIncome(String? uid) async {
+    List<IncomeModel> incomeArray = [];
     FirebaseFirestore.instance.collection("/user").doc(uid).get().then(
       (val) {
         for (var element in val['income']) {
-          Income income = Income(
+          IncomeModel income = IncomeModel(
             amount: element['amount'],
             id: element['id'],
             source: element['source'],
@@ -21,10 +21,10 @@ class Database {
     return incomeArray;
   }
 
-  addIncome(Income income, String? uid) {}
-  deleteIncome(Income income, String? uid) {}
+  addIncome(IncomeModel income, String? uid) {}
+  deleteIncome(IncomeModel income, String? uid) {}
 
   //expenses
-  addExpense(Expense expense, String? uid) {}
-  deleteExpense(Expense expense, String? uid) {}
+  addExpense(ExpenseModel expense, String? uid) {}
+  deleteExpense(ExpenseModel expense, String? uid) {}
 }

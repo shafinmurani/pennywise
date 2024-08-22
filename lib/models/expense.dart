@@ -1,9 +1,9 @@
-class Expense {
+class ExpenseModel {
   final double amount;
   final String topic;
   final String id;
 
-  Expense({required this.amount, required this.topic, required this.id});
+  ExpenseModel({required this.amount, required this.topic, required this.id});
 
   toJson() {
     return {

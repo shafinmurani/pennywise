@@ -1,9 +1,9 @@
-class Income {
+class IncomeModel{
   final double amount;
   final String source;
   final String id;
 
-  Income({required this.amount, required this.source, required this.id});
+  IncomeModel({required this.amount, required this.source, required this.id});
 
   toJson() {
     return {

@@ -27,6 +27,8 @@ class Auth {
           "email": FirebaseAuth.instance.currentUser?.email,
           "income": [],
           "expenses": [],
+          "sources": [],
+          "topics":[],
         },
       );
       return "Welcome, ${FirebaseAuth.instance.currentUser?.displayName}";

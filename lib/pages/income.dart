@@ -9,6 +9,12 @@ class Income extends StatefulWidget {
 
 class _IncomeState extends State<Income> {
   @override
+  void initState() {
+    super.initState();
+    
+  }
+
+  @override
   Widget build(BuildContext context) {
     return const Center(
       child: Text("Income"),

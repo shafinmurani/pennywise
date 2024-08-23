@@ -24,7 +24,7 @@ class _SuccessFulWidgetState extends State<SuccessFulWidget>
 
     lottieController.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
-        Timer(const Duration(seconds: 2), () {});
+        Timer(const Duration(seconds: 1), () {});
         context.go('/');
         lottieController.reset();
       }

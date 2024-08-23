@@ -7,7 +7,9 @@ final GoRouter router = GoRouter(
   routes: [
     GoRoute(
       path: "/",
-      builder: (context, state) => const AuthManager(),
+      builder: (context, state) {
+        return const AuthManager();
+      },
     ),
     GoRoute(
       path: "/income/add",
@@ -20,6 +22,5 @@ final GoRouter router = GoRouter(
         return SuccessFulWidget(animation: animation);
       },
     ),
-    
   ],
 );

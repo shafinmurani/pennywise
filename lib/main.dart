@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:pennywise/firebase_options.dart';
 import 'package:pennywise/router/router.dart';
 import 'package:pennywise/theme/theme.dart';
@@ -11,9 +10,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(
-    Phoenix(
-      child: const MyApp(),
-    ),
+    const MyApp(),
   );
 }
 

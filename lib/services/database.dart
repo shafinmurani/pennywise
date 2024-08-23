@@ -6,7 +6,7 @@ class Database {
   //income
   Future<List<IncomeModel>> getIncome(String? uid) async {
     List<IncomeModel> incomeArray = [];
-    FirebaseFirestore.instance.collection("/user").doc(uid).get().then(
+    await FirebaseFirestore.instance.collection("/user").doc(uid).get().then(
       (val) {
         for (var element in val['income']) {
           IncomeModel income = IncomeModel(
@@ -18,7 +18,8 @@ class Database {
         }
       },
     );
-    return incomeArray;
+
+    return incomeArray.reversed.toList();
   }
 
   Future<List<String>> getSources(String? uid) async {
@@ -48,7 +49,12 @@ class Database {
     });
   }
 
-  deleteIncome(IncomeModel income, String? uid) {}
+  deleteIncome(IncomeModel income, String? uid) async {
+    var collection = FirebaseFirestore.instance.collection('/user');
+    await collection.doc(uid).update({
+      "income": FieldValue.arrayRemove([income.toJson()])
+    });
+  }
 
   //expenses
   addExpense(ExpenseModel expense, String? uid) {}

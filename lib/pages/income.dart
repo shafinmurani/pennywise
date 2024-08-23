@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pennywise/models/income.dart';
 import 'package:pennywise/services/database.dart';
@@ -20,7 +23,10 @@ class _IncomeState extends State<Income> {
   @override
   void initState() {
     super.initState();
-    Database().getIncome(FirebaseAuth.instance.currentUser?.uid).then((res) {
+    Database()
+        .getIncome(FirebaseAuth.instance.currentUser?.uid)
+        .then((res) async {
+      await Future.delayed(const Duration(seconds: 1));
       setState(() {
         incomeArray = res;
         isLoading = false;
@@ -28,11 +34,163 @@ class _IncomeState extends State<Income> {
     });
   }
 
+  bool _showFab = true;
+  Future<void> showEdtiIncomeDialog({required IncomeModel income}) async {
+    bool isLoading = true;
+    List<String> sources = [];
+    await Database()
+        .getSources(FirebaseAuth.instance.currentUser?.uid)
+        .then((res) async {
+      await Future.delayed(
+        const Duration(seconds: 1),
+      );
+      setState(() {
+        sources = res;
+        isLoading = false;
+      });
+    });
+
+    TextEditingController amtController =
+        TextEditingController(text: income.amount.toString());
+
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        final _formKey = GlobalKey<FormState>();
+
+        return AlertDialog(
+          title: const Text('Edit Income'),
+          content: isLoading
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Lottie.asset("assets/loading.json", height: 120),
+                      const Gap(10),
+                      const Text("Loading..."),
+                    ],
+                  ),
+                )
+              : SingleChildScrollView(
+                  child: Form(
+                    key: _formKey,
+                    child: ListBody(
+                      children: <Widget>[
+                        TextFormField(
+                          controller: amtController,
+                          validator: (value) {
+                            if (value == null) {
+                              return "Please input a valid amount";
+                            }
+                            if (value.isEmpty) {
+                              return "Please input a valid amount";
+                            }
+                            if (double.parse(value.replaceAll(",", ""))
+                                .isNegative) {
+                              return "Please input a valid amount";
+                            }
+                            return null;
+                          },
+                          decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: "Amount"),
+                          keyboardType: const TextInputType.numberWithOptions(
+                            signed: false,
+                            decimal: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Update'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                // await CommentServices().editComment(
+                //   comment: comment,
+                //   collectionName: widget.collectionName,
+                //   docID: widget.docId,
+                //   updatedComment: controller.text,
+                // );
+                setState(() {});
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showIncomeDialog({required IncomeModel income}) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Modify Income?'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                ListTile(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    showEdtiIncomeDialog(income: income);
+                  },
+                  leading: const Icon(CupertinoIcons.pen),
+                  title: const Text("Edit Income"),
+                ),
+                ListTile(
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    Database().deleteIncome(
+                      income,
+                      FirebaseAuth.instance.currentUser?.uid,
+                    );
+                    setState(() {
+                      isLoading = true;
+                      incomeArray = [];
+                    });
+                    await Database()
+                        .getIncome(FirebaseAuth.instance.currentUser?.uid)
+                        .then((res) async {
+                      // await Future.delayed(const Duration(seconds: 1));
+                      setState(() {
+                        incomeArray = res;
+                        isLoading = false;
+                      });
+                    });
+                  },
+                  leading: const Icon(CupertinoIcons.trash),
+                  title: const Text("Delete Income"),
+                )
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (mounted) {
-      setState(() {});
-    }
+    const duration = Duration(milliseconds: 300);
     return RefreshIndicator(
       onRefresh: () async {
         setState(() {
@@ -52,12 +210,24 @@ class _IncomeState extends State<Income> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
-          title: Text(
-            "Income",
-            style: GoogleFonts.robotoMono(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-            ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Information",
+                style: GoogleFonts.robotoMono(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                "Amount",
+                style: GoogleFonts.robotoMono(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
         ),
         body: isLoading
@@ -72,22 +242,62 @@ class _IncomeState extends State<Income> {
                 ),
               )
             : incomeArray.isEmpty
-                //TODO : Fix auto array clear bug, can't refresh
                 ? const Center(child: Text("No data available."))
-                : ListView.builder(
-                    itemCount: incomeArray.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(incomeArray[index].source),
-                        trailing: Text(incomeArray[index].amount.toString()),
+                : NotificationListener<UserScrollNotification>(
+                    onNotification: (notification) {
+                      final ScrollDirection direction = notification.direction;
+                      setState(
+                        () {
+                          if (direction == ScrollDirection.reverse) {
+                            _showFab = false;
+                          } else if (direction == ScrollDirection.forward) {
+                            _showFab = true;
+                          }
+                        },
                       );
+                      return true;
                     },
+                    child: ListView.builder(
+                      itemCount: incomeArray.length,
+                      itemBuilder: (context, index) {
+                        DateTime time = DateTime.fromMillisecondsSinceEpoch(
+                            incomeArray[index].id);
+
+                        return ListTile(
+                          onTap: () {
+                            showIncomeDialog(income: incomeArray[index]);
+                          },
+                          title: Text("Source: ${incomeArray[index].source}"),
+                          subtitle: Text(
+                              "Date: ${DateFormat.yMd().add_jm().format(time)}"),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.currency_rupee_rounded,
+                                size: 12,
+                              ),
+                              const Gap(1),
+                              Text(incomeArray[index].amount.toString()),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            context.push("/income/add");
-          },
-          child: const Icon(Icons.add),
+        floatingActionButton: AnimatedSlide(
+          duration: duration,
+          offset: _showFab ? Offset.zero : const Offset(0, 2),
+          child: AnimatedOpacity(
+            duration: duration,
+            opacity: _showFab ? 1 : 0,
+            child: FloatingActionButton(
+              onPressed: () {
+                context.push("/income/add");
+              },
+              child: const Icon(Icons.add),
+            ),
+          ),
         ),
       ),
     );

@@ -56,6 +56,26 @@ class Database {
     });
   }
 
+  editIncome(IncomeModel income, IncomeModel newIncome, String? uid) async {
+    await FirebaseFirestore.instance
+        .collection('/user')
+        .doc(uid)
+        .get()
+        .then((value) async {
+      List array = value['income'];
+      //Finding the index to modify
+      var indexToModify =
+          array.indexWhere((element) => element['id'] == income.id);
+      //Modifying the current entry
+      array[indexToModify] = newIncome.toJson();
+      // Sending the data back to firebase
+      await FirebaseFirestore.instance
+          .collection('/user')
+          .doc(uid)
+          .update({"income": array});
+    });
+  }
+
   //expenses
   addExpense(ExpenseModel expense, String? uid) {}
   deleteExpense(ExpenseModel expense, String? uid) {}

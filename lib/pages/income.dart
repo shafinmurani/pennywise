@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,36 +30,43 @@ class _IncomeState extends State<Income> {
       await Future.delayed(const Duration(seconds: 1));
       setState(() {
         incomeArray = res;
-        isLoading = false;
       });
     });
   }
 
   bool _showFab = true;
   Future<void> showEdtiIncomeDialog({required IncomeModel income}) async {
-    bool isLoading = true;
     List<String> sources = [];
-    await Database()
-        .getSources(FirebaseAuth.instance.currentUser?.uid)
-        .then((res) async {
-      await Future.delayed(
-        const Duration(seconds: 1),
-      );
-      setState(() {
-        sources = res;
-        isLoading = false;
-      });
-    });
+    final formKey1 = GlobalKey<FormState>();
 
+    dynamic getData() async {
+      setState(() {
+        sources = [];
+        isLoading = true;
+      });
+
+      await Database()
+          .getSources(FirebaseAuth.instance.currentUser?.uid)
+          .then((res) async {
+        setState(() {
+          sources = res;
+          isLoading = false;
+        });
+      });
+    }
+
+    await getData();
+    String selectedValue =
+        sources.firstWhere((element) => element == income.source);
     TextEditingController amtController =
         TextEditingController(text: income.amount.toString());
 
     return showDialog<void>(
+      // ignore: use_build_context_synchronously
       context: context,
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
-        final _formKey = GlobalKey<FormState>();
-
+        final formKey = GlobalKey<FormState>();
         return AlertDialog(
           title: const Text('Edit Income'),
           content: isLoading
@@ -74,7 +82,7 @@ class _IncomeState extends State<Income> {
                 )
               : SingleChildScrollView(
                   child: Form(
-                    key: _formKey,
+                    key: formKey,
                     child: ListBody(
                       children: <Widget>[
                         TextFormField(
@@ -93,12 +101,220 @@ class _IncomeState extends State<Income> {
                             return null;
                           },
                           decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: "Amount"),
+                            border: OutlineInputBorder(),
+                            labelText: "Amount",
+                          ),
                           keyboardType: const TextInputType.numberWithOptions(
                             signed: false,
                             decimal: true,
                           ),
+                        ),
+                        const Gap(10),
+                        DropdownButtonFormField2<String>(
+                          // isExpanded: true,
+                          decoration: InputDecoration(
+                            // Add Horizontal padding using menuItemStyleData.padding so it matches
+                            // the menu padding when button's width is not specified.
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 16),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            // Add more decoration..
+                          ),
+                          hint: const Text(
+                            'Source of Income',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          items: sources
+                              .map((item) => DropdownMenuItem<String>(
+                                    value: item,
+                                    child: Text(
+                                      item,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ))
+                              .toList(),
+                          validator: (value) {
+                            if (value == null) {
+                              return 'Please select your source of income';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            //Do something when selected item is changed.
+                            selectedValue = value.toString();
+                          },
+                          onSaved: (value) {
+                            selectedValue = value.toString();
+                          },
+                          value: selectedValue,
+                          buttonStyleData: const ButtonStyleData(
+                            padding: EdgeInsets.only(right: 8),
+                          ),
+                          iconStyleData: const IconStyleData(
+                            icon: Icon(
+                              Icons.arrow_drop_down,
+                              color: Colors.black45,
+                            ),
+                            iconSize: 24,
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                          menuItemStyleData: const MenuItemStyleData(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton(
+                              style: ButtonStyle(
+                                shape: WidgetStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+                              ),
+                              onPressed: () async {
+                                TextEditingController src =
+                                    TextEditingController();
+                                await showDialog<void>(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      content: Stack(
+                                        clipBehavior: Clip.none,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 10,
+                                              bottom: 0,
+                                            ),
+                                            child: Form(
+                                              key: formKey1,
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    child: TextFormField(
+                                                      validator: (val) {
+                                                        if (val == null) {
+                                                          return "Cannot inserty empty values";
+                                                        }
+                                                        if (val.isEmpty) {
+                                                          return "Cannot inserty empty values";
+                                                        }
+                                                        if (val
+                                                            .trim()
+                                                            .isEmpty) {
+                                                          return "Cannot inserty empty values";
+                                                        }
+                                                        return null;
+                                                      },
+                                                      controller: src,
+                                                      decoration:
+                                                          const InputDecoration(
+                                                        label: Text(
+                                                            "Source of Income"),
+                                                        border:
+                                                            OutlineInputBorder(),
+                                                      ),
+                                                      keyboardType:
+                                                          TextInputType.text,
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      TextButton(
+                                                        child: const Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Icon(
+                                                                CupertinoIcons
+                                                                    .xmark_circle,
+                                                                color: CupertinoColors
+                                                                    .destructiveRed),
+                                                            Gap(3),
+                                                            Text(
+                                                              'Cancel',
+                                                              style: TextStyle(
+                                                                  color: CupertinoColors
+                                                                      .destructiveRed),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        onPressed: () {
+                                                          context.pop();
+                                                        },
+                                                      ),
+                                                      TextButton(
+                                                        child: const Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Icon(CupertinoIcons
+                                                                .add_circled),
+                                                            Gap(3),
+                                                            Text('Add'),
+                                                          ],
+                                                        ),
+                                                        onPressed: () {
+                                                          if (formKey1
+                                                              .currentState!
+                                                              .validate()) {
+                                                            formKey1
+                                                                .currentState!
+                                                                .save();
+                                                            Database()
+                                                                .addSources(
+                                                              FirebaseAuth
+                                                                  .instance
+                                                                  .currentUser
+                                                                  ?.uid,
+                                                              src.text,
+                                                              getData(),
+                                                            );
+                                                          }
+                                                        },
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              child: const Row(
+                                children: [
+                                  Icon(CupertinoIcons.add_circled_solid),
+                                  Gap(3),
+                                  Text("Add source of income"),
+                                ],
+                              )),
                         ),
                       ],
                     ),
@@ -115,13 +331,26 @@ class _IncomeState extends State<Income> {
               child: const Text('Update'),
               onPressed: () async {
                 Navigator.of(context).pop();
-                // await CommentServices().editComment(
-                //   comment: comment,
-                //   collectionName: widget.collectionName,
-                //   docID: widget.docId,
-                //   updatedComment: controller.text,
-                // );
-                setState(() {});
+                IncomeModel newIncome = IncomeModel(
+                  amount: double.parse(amtController.text),
+                  source: selectedValue,
+                  id: income.id,
+                );
+                await Database().editIncome(
+                    income, newIncome, FirebaseAuth.instance.currentUser?.uid);
+                setState(() {
+                  incomeArray = [];
+                  isLoading = true;
+                });
+                Database()
+                    .getIncome(FirebaseAuth.instance.currentUser?.uid)
+                    .then((res) async {
+                  await Future.delayed(const Duration(seconds: 1));
+                  setState(() {
+                    incomeArray = res;
+                    isLoading = false;
+                  });
+                });
               },
             ),
           ],

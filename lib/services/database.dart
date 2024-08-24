@@ -77,6 +77,76 @@ class Database {
   }
 
   //expenses
-  addExpense(ExpenseModel expense, String? uid) {}
-  deleteExpense(ExpenseModel expense, String? uid) {}
+  Future<List<ExpenseModel>> getExpense(String? uid) async {
+    List<ExpenseModel> expenseArray = [];
+    await FirebaseFirestore.instance.collection("/user").doc(uid).get().then(
+      (val) {
+        for (var element in val['expenses']) {
+          ExpenseModel expense = ExpenseModel(
+            amount: element['amount'],
+            id: element['id'],
+            topic: element['topic'],
+          );
+          expenseArray.add(expense);
+        }
+      },
+    );
+
+    return expenseArray.reversed.toList();
+  }
+
+  Future<List<String>> getTopics(String? uid) async {
+    List<String> sourceArray = [];
+    await FirebaseFirestore.instance.collection("/user").doc(uid).get().then(
+      (val) {
+        for (var element in val['topics']) {
+          sourceArray.add(element);
+        }
+      },
+    );
+    return sourceArray;
+  }
+
+  void addTopics(String? uid, String source, dynamic callback) async {
+    var collection = FirebaseFirestore.instance.collection('/user');
+    await collection.doc(uid).update({
+      "topics": FieldValue.arrayUnion([source])
+    });
+    callback();
+  }
+
+  addExpense(ExpenseModel expense, String? uid) async {
+    var collection = FirebaseFirestore.instance.collection('/user');
+    await collection.doc(uid).update({
+      "expenses": FieldValue.arrayUnion([expense.toJson()])
+    });
+  }
+
+  deleteExpense(ExpenseModel expense, String? uid) async {
+    var collection = FirebaseFirestore.instance.collection('/user');
+    await collection.doc(uid).update({
+      "expenses": FieldValue.arrayRemove([expense.toJson()])
+    });
+  }
+
+  editExpense(
+      ExpenseModel expense, ExpenseModel newExpense, String? uid) async {
+    await FirebaseFirestore.instance
+        .collection('/user')
+        .doc(uid)
+        .get()
+        .then((value) async {
+      List array = value['expenses'];
+      //Finding the index to modify
+      var indexToModify =
+          array.indexWhere((element) => element['id'] == expense.id);
+      //Modifying the current entry
+      array[indexToModify] = newExpense.toJson();
+      // Sending the data back to firebase
+      await FirebaseFirestore.instance
+          .collection('/user')
+          .doc(uid)
+          .update({"expenses": array});
+    });
+  }
 }

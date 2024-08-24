@@ -5,19 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
-import 'package:pennywise/models/income.dart';
+import 'package:pennywise/models/expense.dart';
 import 'package:pennywise/services/database.dart';
 
-class AddIncome extends StatefulWidget {
-  const AddIncome({super.key});
+class AddExpense extends StatefulWidget {
+  const AddExpense({super.key});
 
   @override
-  State<AddIncome> createState() => _AddIncomeState();
+  State<AddExpense> createState() => _AddExpenseState();
 }
 
-class _AddIncomeState extends State<AddIncome> {
+class _AddExpenseState extends State<AddExpense> {
   bool isLoading = true;
-  List<String> sources = [];
+  List<String> topics = ["You don't have any topics yet"];
 
   String? selectedValue;
   final _formKey = GlobalKey<FormState>();
@@ -32,25 +32,30 @@ class _AddIncomeState extends State<AddIncome> {
 
   dynamic getData() async {
     setState(() {
-      sources = [];
       isLoading = true;
     });
 
     await Database()
-        .getSources(FirebaseAuth.instance.currentUser?.uid)
+        .getTopics(FirebaseAuth.instance.currentUser?.uid)
         .then((res) async {
       await Future.delayed(
         const Duration(seconds: 1),
       );
-      setState(() {
-        sources = res;
-        isLoading = false;
-      });
+      if (res.isNotEmpty) {
+        setState(() {
+          topics = res;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+      }
     });
   }
 
   dynamic success(BuildContext context) async {
-    context.go("/success", extra: "assets/income.json");
+    context.go("/success", extra: "assets/expense.json");
   }
 
   @override
@@ -64,7 +69,7 @@ class _AddIncomeState extends State<AddIncome> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Add Income"),
+        title: const Text("Add Expense"),
         centerTitle: true,
       ),
       body: isLoading
@@ -87,7 +92,7 @@ class _AddIncomeState extends State<AddIncome> {
                     shrinkWrap: true,
                     children: [
                       Lottie.asset(
-                        "assets/income_static.json",
+                        "assets/expense_static.json",
                         repeat: false,
                       ),
                       const Gap(10),
@@ -127,11 +132,13 @@ class _AddIncomeState extends State<AddIncome> {
                           // Add more decoration..
                         ),
                         hint: const Text(
-                          'Source of Income',
+                          'Topic of expense',
                           style: TextStyle(fontSize: 14),
                         ),
-                        items: sources
+                        items: topics
                             .map((item) => DropdownMenuItem<String>(
+                                  enabled:
+                                      item != "You don't have any topics yet",
                                   value: item,
                                   child: Text(
                                     item,
@@ -143,7 +150,7 @@ class _AddIncomeState extends State<AddIncome> {
                             .toList(),
                         validator: (value) {
                           if (value == null) {
-                            return 'Please select your source of income';
+                            return 'Please select your topic of expense';
                           }
                           return null;
                         },
@@ -222,7 +229,7 @@ class _AddIncomeState extends State<AddIncome> {
                                                     decoration:
                                                         const InputDecoration(
                                                       label: Text(
-                                                          "Source of Income"),
+                                                          "Topic of expense"),
                                                       border:
                                                           OutlineInputBorder(),
                                                     ),
@@ -284,7 +291,7 @@ class _AddIncomeState extends State<AddIncome> {
                                                           _formKey1
                                                               .currentState!
                                                               .save();
-                                                          Database().addSources(
+                                                          Database().addTopics(
                                                             FirebaseAuth
                                                                 .instance
                                                                 .currentUser
@@ -312,7 +319,7 @@ class _AddIncomeState extends State<AddIncome> {
                               children: [
                                 Icon(CupertinoIcons.add_circled_solid),
                                 Gap(3),
-                                Text("Add source of income"),
+                                Text("Add topic of expense"),
                               ],
                             )),
                       ),
@@ -321,14 +328,14 @@ class _AddIncomeState extends State<AddIncome> {
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
-                            IncomeModel incomeModel = IncomeModel(
+                            ExpenseModel expenseModel = ExpenseModel(
                               amount: double.parse(
                                   amountController.text.replaceAll(',', '')),
-                              source: "$selectedValue",
+                              topic: "$selectedValue",
                               id: DateTime.now().millisecondsSinceEpoch,
                             );
-                            await Database().addIncome(
-                              incomeModel,
+                            await Database().addExpense(
+                              expenseModel,
                               FirebaseAuth.instance.currentUser?.uid,
                             );
                             // ignore: use_build_context_synchronously

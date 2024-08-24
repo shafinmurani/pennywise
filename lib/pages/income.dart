@@ -60,7 +60,6 @@ class _IncomeState extends State<Income> {
         sources.firstWhere((element) => element == income.source);
     TextEditingController amtController =
         TextEditingController(text: income.amount.toString());
-
     return showDialog<void>(
       // ignore: use_build_context_synchronously
       context: context,
@@ -218,11 +217,41 @@ class _IncomeState extends State<Income> {
       context: context,
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
+        DateTime time = DateTime.fromMillisecondsSinceEpoch(income.id);
+
         return AlertDialog(
+          scrollable: true,
           title: const Text('Modify Income?'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
+                ListTile(
+                  title: Text("Topic: ${income.source}"),
+                  subtitle: Text(DateFormat.yMd().add_jm().format(time)),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        "+",
+                        style: TextStyle(
+                          color: CupertinoColors.activeGreen,
+                        ),
+                      ),
+                      const Icon(
+                        Icons.currency_rupee_rounded,
+                        size: 12,
+                        color: CupertinoColors.activeGreen,
+                      ),
+                      const Gap(1),
+                      Text(
+                        income.amount.toString(),
+                        style: const TextStyle(
+                          color: CupertinoColors.activeGreen,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 ListTile(
                   onTap: () {
                     Navigator.of(context).pop();
@@ -356,12 +385,24 @@ class _IncomeState extends State<Income> {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
+                              const Text(
+                                "+",
+                                style: TextStyle(
+                                  color: CupertinoColors.activeGreen,
+                                ),
+                              ),
                               const Icon(
                                 Icons.currency_rupee_rounded,
                                 size: 12,
+                                color: CupertinoColors.activeGreen,
                               ),
                               const Gap(1),
-                              Text(incomeArray[index].amount.toString()),
+                              Text(
+                                incomeArray[index].amount.toString(),
+                                style: TextStyle(
+                                  color: CupertinoColors.activeGreen,
+                                ),
+                              ),
                             ],
                           ),
                         );

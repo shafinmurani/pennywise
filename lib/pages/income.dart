@@ -27,9 +27,10 @@ class _IncomeState extends State<Income> {
     Database()
         .getIncome(FirebaseAuth.instance.currentUser?.uid)
         .then((res) async {
-      await Future.delayed(const Duration(seconds: 1));
+      // await Future.delayed(const Duration(seconds: 1));
       setState(() {
         incomeArray = res;
+        isLoading = false;
       });
     });
   }
@@ -37,9 +38,8 @@ class _IncomeState extends State<Income> {
   bool _showFab = true;
   Future<void> showEdtiIncomeDialog({required IncomeModel income}) async {
     List<String> sources = [];
-    final formKey1 = GlobalKey<FormState>();
 
-    dynamic getData() async {
+    dynamic getDataSource() async {
       setState(() {
         sources = [];
         isLoading = true;
@@ -55,7 +55,7 @@ class _IncomeState extends State<Income> {
       });
     }
 
-    await getData();
+    await getDataSource();
     String selectedValue =
         sources.firstWhere((element) => element == income.source);
     TextEditingController amtController =
@@ -170,152 +170,6 @@ class _IncomeState extends State<Income> {
                             padding: EdgeInsets.symmetric(horizontal: 16),
                           ),
                         ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextButton(
-                              style: ButtonStyle(
-                                shape: WidgetStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                ),
-                              ),
-                              onPressed: () async {
-                                TextEditingController src =
-                                    TextEditingController();
-                                await showDialog<void>(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      content: Stack(
-                                        clipBehavior: Clip.none,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 10,
-                                              bottom: 0,
-                                            ),
-                                            child: Form(
-                                              key: formKey1,
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: <Widget>[
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(8),
-                                                    child: TextFormField(
-                                                      validator: (val) {
-                                                        if (val == null) {
-                                                          return "Cannot inserty empty values";
-                                                        }
-                                                        if (val.isEmpty) {
-                                                          return "Cannot inserty empty values";
-                                                        }
-                                                        if (val
-                                                            .trim()
-                                                            .isEmpty) {
-                                                          return "Cannot inserty empty values";
-                                                        }
-                                                        return null;
-                                                      },
-                                                      controller: src,
-                                                      decoration:
-                                                          const InputDecoration(
-                                                        label: Text(
-                                                            "Source of Income"),
-                                                        border:
-                                                            OutlineInputBorder(),
-                                                      ),
-                                                      keyboardType:
-                                                          TextInputType.text,
-                                                    ),
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      TextButton(
-                                                        child: const Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Icon(
-                                                                CupertinoIcons
-                                                                    .xmark_circle,
-                                                                color: CupertinoColors
-                                                                    .destructiveRed),
-                                                            Gap(3),
-                                                            Text(
-                                                              'Cancel',
-                                                              style: TextStyle(
-                                                                  color: CupertinoColors
-                                                                      .destructiveRed),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        onPressed: () {
-                                                          context.pop();
-                                                        },
-                                                      ),
-                                                      TextButton(
-                                                        child: const Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Icon(CupertinoIcons
-                                                                .add_circled),
-                                                            Gap(3),
-                                                            Text('Add'),
-                                                          ],
-                                                        ),
-                                                        onPressed: () {
-                                                          if (formKey1
-                                                              .currentState!
-                                                              .validate()) {
-                                                            formKey1
-                                                                .currentState!
-                                                                .save();
-                                                            Database()
-                                                                .addSources(
-                                                              FirebaseAuth
-                                                                  .instance
-                                                                  .currentUser
-                                                                  ?.uid,
-                                                              src.text,
-                                                              getData(),
-                                                            );
-                                                          }
-                                                        },
-                                                      ),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              child: const Row(
-                                children: [
-                                  Icon(CupertinoIcons.add_circled_solid),
-                                  Gap(3),
-                                  Text("Add source of income"),
-                                ],
-                              )),
-                        ),
                       ],
                     ),
                   ),
@@ -332,7 +186,7 @@ class _IncomeState extends State<Income> {
               onPressed: () async {
                 Navigator.of(context).pop();
                 IncomeModel newIncome = IncomeModel(
-                  amount: double.parse(amtController.text),
+                  amount: double.parse(amtController.text.replaceAll(',', '')),
                   source: selectedValue,
                   id: income.id,
                 );

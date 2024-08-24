@@ -321,7 +321,8 @@ class _AddIncomeState extends State<AddIncome> {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
                             IncomeModel incomeModel = IncomeModel(
-                              amount: double.parse(amountController.text),
+                              amount: double.parse(
+                                  amountController.text.replaceAll(',', '')),
                               source: "$selectedValue",
                               id: DateTime.now().millisecondsSinceEpoch,
                             );

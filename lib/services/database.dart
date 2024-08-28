@@ -13,6 +13,7 @@ class Database {
             amount: element['amount'],
             id: element['id'],
             source: element['source'],
+            dateTime: DateTime.fromMillisecondsSinceEpoch(element['id']),
           );
           incomeArray.add(income);
         }
@@ -86,6 +87,7 @@ class Database {
             amount: element['amount'],
             id: element['id'],
             topic: element['topic'],
+            dateTime: DateTime.fromMillisecondsSinceEpoch(element['id']),
           );
           expenseArray.add(expense);
         }

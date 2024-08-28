@@ -399,7 +399,7 @@ class _IncomeState extends State<Income> {
                               const Gap(1),
                               Text(
                                 incomeArray[index].amount.toString(),
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: CupertinoColors.activeGreen,
                                 ),
                               ),

@@ -322,7 +322,6 @@ class _ExpensesState extends State<Expenses> {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

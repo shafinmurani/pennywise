@@ -35,7 +35,7 @@ class _HomeState extends State<Home> {
         title: const Text("XerØ"),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: const Color(0xffe4e4e4),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.money_dollar_circle_fill),

@@ -321,7 +321,6 @@ class _IncomeState extends State<Income> {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

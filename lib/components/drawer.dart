@@ -14,9 +14,14 @@ class _DrawerComponentState extends State<DrawerComponent> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      backgroundColor: const Color(0xfffaf7ff),
       child: Column(
         children: [
           UserAccountsDrawerHeader(
+              currentAccountPicture: CircleAvatar(
+                backgroundImage: NetworkImage(
+                    "${FirebaseAuth.instance.currentUser?.photoURL}"),
+              ),
               decoration: const BoxDecoration(
                 color: Color(0xffe4e4e4),
               ),

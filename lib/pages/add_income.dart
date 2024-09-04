@@ -63,7 +63,7 @@ class _AddIncomeState extends State<AddIncome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: const Color(0xffe4e4e4),
         title: const Text("Add Income"),
         centerTitle: true,
       ),

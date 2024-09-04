@@ -7,12 +7,49 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:774157095097:android:66569d1231959ceef70b68",
+        "android_client_info": {
+          "package_name": "com.hackathon.xero"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "774157095097-s1bqu8qqmohdmfgoq3homvbi7gcrue7e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKbIdB5CNGENskM_jD7igdvp6xjIHB1-s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "774157095097-s1bqu8qqmohdmfgoq3homvbi7gcrue7e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:774157095097:android:907d52b406868149f70b68",
         "android_client_info": {
           "package_name": "com.penny.wise"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "774157095097-11oa4s675eiirhde3qhj8ntl6bat1n5t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.penny.wise",
+            "certificate_hash": "d4d4fbe0bf830930b1f771b13d548d2c79ad16ad"
+          }
+        },
         {
           "client_id": "774157095097-jd21hmq2gv3sa776h04vvqa87gpbnobk.apps.googleusercontent.com",
           "client_type": 1,

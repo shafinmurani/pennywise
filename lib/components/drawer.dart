@@ -17,13 +17,17 @@ class _DrawerComponentState extends State<DrawerComponent> {
       child: Column(
         children: [
           UserAccountsDrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
+              decoration: const BoxDecoration(
+                color: Color(0xffe4e4e4),
               ),
-              accountName:
-                  Text("${FirebaseAuth.instance.currentUser?.displayName}"),
-              accountEmail:
-                  Text("${FirebaseAuth.instance.currentUser?.email}")),
+              accountName: Text(
+                "${FirebaseAuth.instance.currentUser?.displayName}",
+                style: const TextStyle(color: Color(0xff1e1e1e)),
+              ),
+              accountEmail: Text(
+                "${FirebaseAuth.instance.currentUser?.email}",
+                style: const TextStyle(color: Color(0xff1e1e1e)),
+              )),
           Expanded(
             child: Align(
               alignment: FractionalOffset.bottomCenter,

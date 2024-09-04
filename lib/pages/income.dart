@@ -416,6 +416,8 @@ class _IncomeState extends State<Income> {
             duration: duration,
             opacity: _showFab ? 1 : 0,
             child: FloatingActionButton(
+              backgroundColor: const Color(0xffe4e4e4),
+              foregroundColor: const Color(0xff1e1e1e),
               onPressed: () {
                 context.push("/income/add");
               },

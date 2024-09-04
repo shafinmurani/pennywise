@@ -31,8 +31,8 @@ class _HomeState extends State<Home> {
     return Scaffold(
       drawer: const DrawerComponent(),
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("PennyWise"),
+        backgroundColor: const Color(0xffe4e4e4),
+        title: const Text("XerØ"),
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -51,7 +51,7 @@ class _HomeState extends State<Home> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: const Color(0xff1e1e1e),
         onTap: _onItemTapped,
       ),
       body: pages[_selectedIndex],

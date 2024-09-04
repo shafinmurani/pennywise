@@ -68,7 +68,7 @@ class _AddExpenseState extends State<AddExpense> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: const Color(0xffe4e4e4),
         title: const Text("Add Expense"),
         centerTitle: true,
       ),

@@ -54,9 +54,10 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBKbIdB5CNGENskM_jD7igdvp6xjIHB1-s',
-    appId: '1:774157095097:android:907d52b406868149f70b68',
+    appId: '1:774157095097:android:66569d1231959ceef70b68',
     messagingSenderId: '774157095097',
     projectId: 'pennywise-b4d0c',
     storageBucket: 'pennywise-b4d0c.appspot.com',
   );
+
 }
